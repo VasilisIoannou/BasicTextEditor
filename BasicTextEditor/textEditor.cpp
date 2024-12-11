@@ -143,6 +143,17 @@ private:
         }
 
         text.insert(text.begin() + currentPosition + NotinsertMode,inputChar);
+
+        if(inputChar == '('){
+            text.insert(text.begin() + currentPosition + 1 + NotinsertMode,')');
+        } else if(inputChar == '{'){
+            text.insert(text.begin() + currentPosition + 1 + NotinsertMode,'}');
+        } else if(inputChar == '['){
+            text.insert(text.begin() + currentPosition + 1 + NotinsertMode,']');
+        } else if(inputChar == '<'){
+            text.insert(text.begin() + currentPosition + 1 + NotinsertMode,'>');
+        }
+
         currentPosition++;
     }
 
@@ -278,6 +289,14 @@ int main(){
         return 1;
     }
 
+    HANDLE hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    if (GetConsoleCursorInfo(hConsoleOutput, &cursorInfo)) {
+        cursorInfo.bVisible = false; // Set caret visibility
+        SetConsoleCursorInfo(hConsoleOutput, &cursorInfo);
+    } else {
+        std::cerr << "Error: Unable to retrieve console cursor info.\n";
+    }
 
     INPUT_RECORD inputRecord;
     DWORD eventsRead;
