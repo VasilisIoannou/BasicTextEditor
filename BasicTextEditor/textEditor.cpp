@@ -5,7 +5,8 @@
 #include <windows.h>
 
 /* To DO List */
-// Add Help Section
+// Add Up button
+// Add Undo
 
 
 enum STATE{
@@ -207,6 +208,7 @@ public:
         }
         WORD VirtualKey = event.wVirtualKeyCode;
         if(VirtualKey == VK_RETURN){
+            if(text.size() == 0) text.push_back('\n');
             text.insert(text.begin()+currentPosition,'\n');
             return;
         }
@@ -229,8 +231,11 @@ public:
             }
             return;
         }
-        if(VirtualKey== VK_DOWN){
+        if(VirtualKey == VK_DOWN){
             downArrow();
+            return;
+        }
+        if(VirtualKey == VK_UP){
             return;
         }
         if(VirtualKey == VK_CONTROL){
