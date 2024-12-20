@@ -102,24 +102,69 @@ private:
         int textSize = text.size();
         int startPos = currentPosition;
         if(startPos == 0) startPos++;
+
+        //Find previous /n
+        int prevTab = currentPosition;
+
+        if(text[prevTab] == '\n') prevTab--;
+        while(text[prevTab] != '\n' && prevTab > 0){
+            prevTab--;
+        }
+        int relativPos  = startPos - prevTab;
+        if(prevTab == 0 && currentPosition != 0) relativPos++;
+
+        //Find next /n
+        int nextTab = currentPosition;
+        if(text[nextTab] == '\n') nextTab++;
+
+        while(text[nextTab] != '\n' && nextTab < textSize -1){
+            nextTab ++ ;
+        }
+
+        //Find 2nd next /n
+        int nextSecondTab = nextTab;
+        if(nextSecondTab+1<textSize) nextSecondTab++;
+
+        while(text[nextSecondTab] != '\n' && nextSecondTab < textSize -1){
+            nextSecondTab ++ ;
+        }
+
+        if(nextTab + relativPos > nextSecondTab && nextTab + relativPos < textSize)
+            currentPosition = nextSecondTab;
+        else if(nextTab + relativPos < textSize)
+            currentPosition = nextTab + relativPos;
+        else if(text[currentPosition] == '\n')
+            currentPosition--;
+    }
+
+    void upArrow(){
+        int textSize = text.size();
+        int startPos = currentPosition;
+        if(startPos == 0) startPos++;
+
         //Find previous /n
         int prevTab = currentPosition;
         while(text[prevTab] != '\n' && prevTab>1){
             prevTab--;
         }
-        //Find next /n
-        int nextTab = currentPosition;
-        if(text[nextTab] == '\n') nextTab++;
-        while(text[nextTab] != '\n' && nextTab < textSize -1){
-            nextTab ++ ;
-        }
-        int relativPos = startPos - prevTab;
-        std::cout<<prevTab<<' '<<relativPos<<' '<<nextTab<<'\n';
-        if(nextTab + relativPos < textSize) currentPosition = nextTab + relativPos;
 
-    }
-    void upArrow(){
-        return;
+        int relativPos = startPos - prevTab;
+
+        //Find 2nd previous /n
+        int prevSecondTab;
+        if(prevTab - 1 > 0)
+            prevSecondTab = prevTab - 1;
+        else prevSecondTab = 0;
+
+        while(text[prevSecondTab] != '\n' && prevSecondTab > 0){
+            prevSecondTab--;
+        }
+
+        if(relativPos + prevSecondTab > prevTab && prevTab-1 > 0) currentPosition = prevTab - 1;
+
+        else if(prevSecondTab > 0) currentPosition = prevSecondTab + relativPos;
+        else currentPosition = relativPos - 1;
+
     }
 
     void saveFile(){
@@ -236,6 +281,7 @@ public:
             return;
         }
         if(VirtualKey == VK_UP){
+            upArrow();
             return;
         }
         if(VirtualKey == VK_CONTROL){
@@ -254,19 +300,20 @@ public:
             if(i == currentPosition){
                 setTextColor("red");
             }
-            if((text[i] == ' ' || text[i] == '\n') && i == currentPosition){
-
-                if(text[i] == '\n') std::cout<<','<<'\n';
-                else std::cout<<'_';
-            } else {
+            if((text[i] == ' ') && i == currentPosition){
+                std::cout<<'_';
+            } else if(text[i] != '\n') {
                 std::cout<<text[i];
-            }
-
-            setTextColor("normal");
-            if(text[i] == '\n'){
+            } else if(text[i] == '\n'){
                 currentRow++;
-                std::cout<<currentRow<<':';
+                setTextColor("normal");
+                std::cout<<'\n'<<currentRow<<':';
+                if(i == currentPosition){
+                    setTextColor("red");
+                    std::cout<<'_';
+                }
             }
+            setTextColor("normal");
         }
     }
 
